@@ -3,15 +3,15 @@
 ##########################################
 
 resource "aws_vpc" "vpc" {
-  cidr_block           = "10.0.0.0/16"
+  cidr_block           = "10.100.0.0/16"
   instance_tenancy     = var.instance_tenancy
   enable_dns_support   = var.enable_dns_support
   enable_dns_hostnames = var.enable_dns_hostnames
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc"
+    "TERRAFORM:Resource" = "aws_vpc"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -23,9 +23,9 @@ resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-igw"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-igw"
+    "TERRAFORM:Resource" = "aws_internet_gateway"
+    "TERRAFORM:Module"   = "vpc"
   })
 
   depends_on = [
@@ -40,11 +40,11 @@ resource "aws_internet_gateway" "igw" {
 resource "aws_route_table" "app" {
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name = "${var.resource_name_prefix}-vpc-app-rtb"
-    ResourceType = "vpc"
-    Module       = "vpc"
-  }
+  tags = merge(var.tags, {
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-app-rtb"
+    "TERRAFORM:Resource" = "aws_route_table"
+    "TERRAFORM:Module"   = "vpc"
+  })
 }
 
 resource "aws_route" "app" {
@@ -58,15 +58,15 @@ resource "aws_route" "app" {
 ##########################################
 
 resource "aws_subnet" "app_1" {
-  vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.1.0/24"
-  availability_zone_id = var.primary_zone_id
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.100.1.0/24"
+  availability_zone_id    = var.primary_zone_id
   map_public_ip_on_launch = var.map_public_ip_on_launch
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-app-1"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-app-1"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -80,15 +80,15 @@ resource "aws_route_table_association" "app_1_association" {
 ##########################################
 
 resource "aws_subnet" "app_2" {
-  vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.2.0/24"
-  availability_zone_id = var.secondary_zone_id
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.100.2.0/24"
+  availability_zone_id    = var.secondary_zone_id
   map_public_ip_on_launch = var.map_public_ip_on_launch
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-app-2"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-app-2"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -104,11 +104,11 @@ resource "aws_route_table_association" "app_2_association" {
 resource "aws_route_table" "server" {
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name = "${var.resource_name_prefix}-vpc-server-rtb"
-    ResourceType = "vpc"
-    Module       = "vpc"
-  }
+  tags = merge(var.tags, {
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-server-rtb"
+    "TERRAFORM:Resource" = "aws_route_table"
+    "TERRAFORM:Module"   = "vpc"
+  })
 }
 
 ##########################################
@@ -117,13 +117,13 @@ resource "aws_route_table" "server" {
 
 resource "aws_subnet" "server_1" {
   vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.3.0/24"
+  cidr_block           = "10.100.3.0/24"
   availability_zone_id = var.primary_zone_id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-server-1"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-server-1"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -138,13 +138,13 @@ resource "aws_route_table_association" "server_1_association" {
 
 resource "aws_subnet" "server_2" {
   vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.4.0/24"
+  cidr_block           = "10.100.4.0/24"
   availability_zone_id = var.secondary_zone_id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-server-2"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-server-2"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -160,11 +160,11 @@ resource "aws_route_table_association" "server_2_association" {
 resource "aws_route_table" "db" {
   vpc_id = aws_vpc.vpc.id
 
-  tags = {
-    Name = "${var.resource_name_prefix}-vpc-db-rtb"
-    ResourceType = "vpc"
-    Module       = "vpc"
-  }
+  tags = merge(var.tags, {
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-db-rtb"
+    "TERRAFORM:Resource" = "aws_route_table"
+    "TERRAFORM:Module"   = "vpc"
+  })
 }
 
 ##########################################
@@ -173,13 +173,13 @@ resource "aws_route_table" "db" {
 
 resource "aws_subnet" "db_1" {
   vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.5.0/24"
+  cidr_block           = "10.100.5.0/24"
   availability_zone_id = var.primary_zone_id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-db-1"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-db-1"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -194,13 +194,13 @@ resource "aws_route_table_association" "db_1_association" {
 
 resource "aws_subnet" "db_2" {
   vpc_id               = aws_vpc.vpc.id
-  cidr_block           = "10.0.6.0/24"
+  cidr_block           = "10.100.6.0/24"
   availability_zone_id = var.secondary_zone_id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-db-2"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-db-2"
+    "TERRAFORM:Resource" = "aws_subnet"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 

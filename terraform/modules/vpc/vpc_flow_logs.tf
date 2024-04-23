@@ -5,9 +5,9 @@ resource "aws_flow_log" "vpc" {
   vpc_id          = aws_vpc.vpc.id
 
   tags = merge(var.tags, {
-    Name         = "${var.resource_name_prefix}-vpc-flow-logs"
-    ResourceType = "vpc"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-vpc-flow-logs"
+    "TERRAFORM:Resource" = "aws_flow_log"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -16,8 +16,9 @@ resource "aws_cloudwatch_log_group" "vpc_flow_logs" {
   retention_in_days = var.vpc_flow_logs_retention_in_days
 
   tags = merge(var.tags, {
-    ResourceType = "cloudwatch"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-cloudwatch-vpc-log"
+    "TERRAFORM:Resource" = "aws_cloudwatch_log_group"
+    "TERRAFORM:Module"   = "vpc"
   })
 }
 
@@ -58,9 +59,10 @@ resource "aws_iam_role" "vpc_flow_logs" {
     name   = "cwlogs"
     policy = data.aws_iam_policy_document.vpc_flow_logs_cwlogs.json
   }
-  
+
   tags = merge(var.tags, {
-    ResourceType = "iam"
-    Module       = "vpc"
+    "CAPSTONE:Name"      = "${var.resource_name_prefix}-iam-vpc-flow-logs-role"
+    "TERRAFORM:Resource" = "aws_iam_role"
+    "TERRAFORM:Module"   = "vpc"
   })
 }

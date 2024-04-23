@@ -9,7 +9,7 @@ locals {
   prefix_separator = "-"
 
   tags = {
-    "CAPSTONE:Prefix"      = var.prefix
+    "CAPSTONE:Provider"    = var.tags.provider_name
     "CAPSTONE:Project"     = var.tags.project_name
     "CAPSTONE:Environment" = var.tags.environment_name
     "CAPSTONE:Owner"       = var.tags.owner
