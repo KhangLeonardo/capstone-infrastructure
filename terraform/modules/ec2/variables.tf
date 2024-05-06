@@ -8,6 +8,10 @@ variable "tags" {
   default     = {}
 }
 
+variable "vpc_id" {
+  type = string
+}
+
 variable "backend_system_subnet_id" {
   type = string
 }

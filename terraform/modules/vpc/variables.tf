@@ -29,7 +29,7 @@ variable "enable_dns_support" {
 variable "enable_dns_hostnames" {
   description = "A boolean flag to enable/disable DNS hostnames in the VPC. Default is false."
   type        = string
-  default     = false
+  default     = true
 }
 
 variable "primary_zone_id" {

@@ -49,3 +49,7 @@ output "db_1_subnet_id" {
 output "db_2_subnet_id" {
   value = aws_subnet.db_2.id
 }
+
+output "vpc_s3_endpoint_id" {
+  value = aws_vpc_endpoint.s3.id
+}
