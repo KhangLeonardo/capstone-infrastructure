@@ -6,10 +6,10 @@ resource "aws_s3_bucket" "this" {
   bucket        = "${var.resource_name_prefix}-${var.bucket_name}"
   force_destroy = true
 
-    tags = merge(var.tags, {
-      "TERRAFORM:Resource" = "aws_s3_bucket"
-      "TERRAFORM:Module"   = "jenkins"
-    })
+  tags = merge(var.tags, {
+    "TERRAFORM:Resource" = "aws_s3_bucket"
+    "TERRAFORM:Module"   = "jenkins"
+  })
 }
 
 ##########################################
@@ -66,7 +66,7 @@ resource "aws_s3_bucket_policy" "this" {
         Effect    = "Allow"
         Principal = "*"
         Action    = ["s3:GetObject", "s3:ListBucket"]
-        Resource  = [
+        Resource = [
           "${aws_s3_bucket.this.arn}",
           "${aws_s3_bucket.this.arn}/*"
         ]
@@ -92,19 +92,10 @@ resource "aws_s3_bucket_policy" "this" {
 #   source = "${path.module}/src/${each.value}"
 # }
 
-resource "aws_s3_object" "env_file" {
-  bucket   = aws_s3_bucket.this.bucket
-  key      = ".env"
-  source   = "${path.module}/src/.env"
-  metadata = {
-    md5 = filemd5("${path.module}/src/.env")
-  }
-}
-
 resource "aws_s3_object" "compose_file" {
-  bucket   = aws_s3_bucket.this.bucket
-  key      = "docker-compose.yaml"
-  source   = "${path.module}/src/docker-compose.yaml"
+  bucket = aws_s3_bucket.this.bucket
+  key    = "docker-compose.yaml"
+  source = "${path.module}/src/docker-compose.yaml"
   metadata = {
     md5 = filemd5("${path.module}/src/docker-compose.yaml")
   }

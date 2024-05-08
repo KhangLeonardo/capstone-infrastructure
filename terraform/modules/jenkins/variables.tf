@@ -9,7 +9,7 @@ variable "ami" {
 
 variable "instance_type" {
   description = "Type of EC2 instance"
-  default     = "t3.small"
+  default     = "t3.medium"
 }
 
 variable "public_subnet_ids" {

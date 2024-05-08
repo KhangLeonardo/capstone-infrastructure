@@ -2,27 +2,20 @@ version: '3.9'
 
 services:
   db:
-    # image: postgres
     image: khangtgr/mykidz-postgres
+    container_name: mykidz-postgres
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    container_name: nest-db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # - ./schema/init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - '5432:5432'
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     deploy:
       resources:
         limits:
@@ -30,12 +23,12 @@ services:
           memory: 512M
 
   redis:
-    image: redis
+    image: khangtgr/mykidz-redis
+    container_name: mykidz-redis
     environment:
       REDIS_HOST: ${REDIS_HOST}
       REDIS_USERNAME: ${REDIS_USERNAME}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
-    container_name: nest-redis
     volumes:
       - redis_data:/data
     ports:
@@ -43,11 +36,6 @@ services:
     networks:
       - app-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
     deploy:
       resources:
         limits:
@@ -55,16 +43,16 @@ services:
           memory: 512M
 
   pgadmin:
-    image: dpage/pgadmin4
+    image: khangtgr/mykidz-pgadmin4
+    container_name: mykidz-pgadmin
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
-      PGADMIN_LISTEN_PORT: ${PGADMIN_LISTEN_PORT}
-    container_name: nest-pgadmin
+      PGADMIN_LISTEN_PORT: ${PGADMIN_PORT}
     volumes:
       - pgadmin_data:/var/lib/pgadmin
     ports:
-      - "${PGADMIN_PORT}:${PGADMIN_LISTEN_PORT}"
+      - "${PGADMIN_PORT}:${PGADMIN_PORT}"
     depends_on:
       - db
     networks:
@@ -76,16 +64,12 @@ services:
           cpus: '0.5'
           memory: 256M
 
-  server:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    #   target: ${SERVER_STAGE}
+  appserver:
     image: khangtgr/mykidz-appserver
     env_file:
       - .env
     ports:
-      - '3000'
+      - "${LOCALHOST_PORT}"
     depends_on:
       - db
     networks:
@@ -100,15 +84,12 @@ services:
           memory: 512M
 
   nginx:
-    # image: nginx:latest
     image: khangtgr/mykidz-nginx
-    container_name: nest-nginx
+    container_name: mykidz-nginx
     ports:
       - '9090:80'
-    # volumes:
-    #   - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      - server
+      - appserver
     networks:
       - app-network
     restart: unless-stopped
@@ -126,3 +107,4 @@ volumes:
   postgres_data:
   pgadmin_data:
   redis_data:
+

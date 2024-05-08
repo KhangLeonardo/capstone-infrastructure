@@ -1,7 +1,9 @@
 resource "aws_eip" "this" {
-  count = var.enable_eip ? 1 : 0
-   domain = "vpc"
-   instance = aws_instance.this.id
+  count    = var.enable_eip ? 1 : 0
+  domain   = "vpc"
+  instance = aws_instance.this.id
+
+  depends_on = [aws_instance.this]
 
   tags = merge(var.tags, {
     Name                 = "${var.resource_name_prefix}-jenkins-server-eip"

@@ -38,8 +38,11 @@ resource "aws_instance" "this" {
   lifecycle {
     ignore_changes = [
       security_groups,
+      user_data
     ]
   }
+
+  depends_on = [aws_s3_bucket.this]
 }
 
 resource "aws_security_group" "this" {
@@ -52,6 +55,7 @@ resource "aws_security_group" "this" {
     to_port     = 22
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "SSH connection"
   }
 
   ingress {
@@ -59,6 +63,7 @@ resource "aws_security_group" "this" {
     to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTP connection"
   }
 
   ingress {
@@ -66,6 +71,7 @@ resource "aws_security_group" "this" {
     to_port     = 443
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS connection"
   }
 
   ingress {
@@ -73,6 +79,23 @@ resource "aws_security_group" "this" {
     to_port     = 8080
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Jenkins dashboard connection"
+  }
+
+  ingress {
+    from_port   = 9090
+    to_port     = 9090
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "App server connection"
+  }
+
+  ingress {
+    from_port   = 5000
+    to_port     = 5000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+    description = "PGAdmin4 dashboard connection"
   }
 
   egress {
@@ -80,6 +103,7 @@ resource "aws_security_group" "this" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+    description = "Allow all outbound traffic"
   }
 
   tags = merge(var.tags, {
